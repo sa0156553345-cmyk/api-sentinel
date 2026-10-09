@@ -1,0 +1,37 @@
+# Python bytecode and tooling caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+
+# Run outputs. Anchored to the repository root so that examples/ stays tracked.
+/api-sentinel-report.json
+/api-sentinel.sarif
+/report.json
+/report.html
+
+# Identities files hold real tokens in practice. Keep them out of git.
+/identities.json
+
+# Run outputs of the test tools
+*.log
+*.pid
+/tests/authz_matrix/results.csv
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Secrets and local configuration
+.env
+.env.*
+!.env.example
+
+# Local generated reports
+report.json
+report.html
+report.sarif

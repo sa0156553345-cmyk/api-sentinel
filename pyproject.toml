@@ -1,0 +1,20 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "api-sentinel"
+version = "0.2.0"
+description = "Behavioral + authorization-boundary (BOLA) API security testing for authorized environments"
+readme = "README.md"
+requires-python = ">=3.9"
+license = {text = "MIT"}
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[project.scripts]
+api-sentinel = "api_sentinel:cli"
+
+[tool.setuptools]
+py-modules = ["api_sentinel"]

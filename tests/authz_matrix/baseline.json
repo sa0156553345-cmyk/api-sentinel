@@ -1,0 +1,1101 @@
+{
+ "S01-secure-404|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S01-secure-404|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S01-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S01-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S01-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S01-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-secure|alice>carol|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-secure|bob>carol|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-secure|carol>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-secure|carol>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S02-matrix-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-vuln|alice>carol|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-vuln|bob>carol|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-vuln|carol>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-matrix-vuln|carol>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>bob|DELETE": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>bob|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>carol|DELETE": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>carol|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S02-stateful-vuln|alice>carol|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-all-secure|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-all-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-all-secure|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-all-vuln|alice>bob|DELETE": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-all-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-all-vuln|alice>bob|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-delete-only|alice>bob|DELETE": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-delete-only|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-delete-only|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-get-only|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-get-only|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S03-get-only|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-matrix-delete|alice>bob|DELETE": {
+  "state": "REFUSED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-matrix-delete|bob>alice|DELETE": {
+  "state": "REFUSED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-patch-only|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-patch-only|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S03-patch-only|alice>bob|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S04-put-secure|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-secure|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-secure|alice>bob|PUT": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-vuln|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-vuln|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-vuln|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S04-put-vuln|alice>bob|PUT": {
+  "state": "NO_FINDING",
+  "outcome": "FN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S05-async-secure|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S05-async-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S05-async-secure|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S05-async-vuln|alice>bob|DELETE": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S05-async-vuln|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S05-async-vuln|alice>bob|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S06-noop|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S06-noop|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S06-noop|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S07-blind|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S07-blind|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S07-blind|alice>bob|PATCH": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S08-soft-error-matrix|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-soft-error-matrix|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-soft-error-stateful|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-soft-error-stateful|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-soft-error-stateful|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-stub-matrix|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S08-stub-matrix|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S09-bare|alice>bob|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S09-bare|bob>alice|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S09-created_by|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S09-created_by|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S09-envelope|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S09-envelope|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S09-nested_owner|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-nested_owner|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-ownerId|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-ownerId|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-ref_full|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-ref_full|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S09-ref_partial|alice>bob|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S09-ref_partial|bob>alice|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S10-json-as-text|alice>bob|GET": {
+  "state": "SKIPPED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S10-json-as-text|bob>alice|GET": {
+  "state": "SKIPPED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S10-pdf|alice>bob|GET": {
+  "state": "SKIPPED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S10-pdf|bob>alice|GET": {
+  "state": "SKIPPED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S11-child-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S11-child-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S11-child-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S11-child-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S11-list-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S11-list-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S11-list-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S11-list-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S12-leaky-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S12-leaky-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S12-scoped-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S12-scoped-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-filter-deny-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-filter-deny-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-filter-honor-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S13-filter-honor-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S13-filter-ignore-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-filter-ignore-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-profile-honor-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S13-profile-honor-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S13-profile-ignore-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S13-profile-ignore-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S14-admin-secure|alice>admin|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S14-admin-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S14-admin-secure|bob>admin|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S14-admin-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S14-admin-vuln|alice>admin|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S14-admin-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S14-admin-vuln|bob>admin|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S14-admin-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-secure|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-secure|alice>carol|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S15-share-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S15-share-secure|bob>carol|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S15-share-secure|carol>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S15-share-secure|carol>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S15-share-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-vuln|alice>carol|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-vuln|bob>carol|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-vuln|carol>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S15-share-vuln|carol>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S16-public|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S16-public|alice>carol|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S16-public|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S16-public|bob>carol|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S16-public|carol>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S16-public|carol>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S17-ownerless|alice>bob|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S17-same-principal|alice-mobile>alice-web|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S17-same-principal|alice-web>alice-mobile|GET": {
+  "state": "FINDING",
+  "outcome": "UNDECIDABLE_FLAGGED",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S18-cli-no-owns|alice>bob|GET": {
+  "state": "REFUSED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S18-cli-no-owns|bob>alice|GET": {
+  "state": "REFUSED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S19-cli-setup-fails|alice>bob|DELETE": {
+  "state": "SETUP_FAILED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S19-cli-setup-fails|alice>bob|GET": {
+  "state": "SETUP_FAILED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S19-cli-setup-fails|alice>bob|PATCH": {
+  "state": "SETUP_FAILED",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S20-cli-connection-reset|alice>bob|GET": {
+  "state": "UNREACHABLE",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S20-cli-connection-reset|bob>alice|GET": {
+  "state": "UNREACHABLE",
+  "outcome": "NEEDS_INPUT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S21-deny-body-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S21-deny-body-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S21-deny-body-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S21-deny-body-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S22-no-id-body|alice>bob|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S23-owner-mismatch|alice>bob|GET": {
+  "state": "UNDETERMINED",
+  "outcome": "UNDETERMINED",
+  "confidence": "low",
+  "severity": "info",
+  "score": 0.0
+ },
+ "S24-partial-status|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "UNDECIDABLE_SILENT",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S25-holder-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S25-holder-secure|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S25-holder-vuln|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S25-holder-vuln|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S26-placeholder-same-schema|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S26-placeholder-same-schema|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ }
+}

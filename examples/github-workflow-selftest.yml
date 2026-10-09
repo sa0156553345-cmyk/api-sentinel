@@ -1,0 +1,176 @@
+# Self-test of the API Sentinel composite action on a GitHub-hosted runner.
+#
+# How to use it: in a TEST repository, copy this file to .github/workflows/, and copy action.yml, api_sentinel.py and
+# examples/ to the repository root. Run it manually (workflow_dispatch). Every "Assert" step must pass.
+#
+# It needs no secrets and no external service: it starts the demo API on the runner itself. The vulnerable demo is
+# scanned first, with every case that needs it (findings, undetermined, refused write opt-in), and only then stopped.
+#
+# The next-to-last step uploads the vulnerable scan's SARIF to the Security tab. That needs code scanning enabled for
+# the repository (for a private repository, GitHub Advanced Security). The step is optional: if the upload is refused it
+# does not fail the job, and the assertions decide the result.
+#
+# Status: NOT VERIFIED on GitHub until this workflow has been run there.
+
+name: API Sentinel self-test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  selftest:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write the identities files used by the negative cases
+        run: |
+          cat > undetermined-identities.json << 'JSON'
+          {"identities": [
+            {"name": "alice", "headers": {"Authorization": "Bearer alice-token"}, "owns": [1001],
+             "owner_values": {"user_id": 7}},
+            {"name": "bob", "headers": {"Authorization": "Bearer bob-token"}, "owns": []}
+          ]}
+          JSON
+          cat > no-owns-identities.json << 'JSON'
+          {"identities": [
+            {"name": "alice", "headers": {"Authorization": "Bearer alice-token"}, "owns": []},
+            {"name": "bob", "headers": {"Authorization": "Bearer bob-token"}, "owns": []}
+          ]}
+          JSON
+
+      - name: Start the vulnerable demo
+        run: |
+          nohup python3 examples/vulnerable_api.py > vulnerable-demo.log 2>&1 &
+          echo $! > vulnerable-demo.pid
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null -H "Authorization: Bearer alice-token" http://127.0.0.1:8000/orders/1001 && break
+            sleep 1
+          done
+
+      - name: Scan the vulnerable demo
+        id: vulnerable
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: examples/identities.json
+          sarif-output: vulnerable.sarif
+          json-output: vulnerable-report.json
+
+      - name: Assert the vulnerable demo has two confirmed findings and a valid SARIF
+        run: |
+          test "${{ steps.vulnerable.outputs.exit-code }}" = "1" || { echo "expected exit 1, got '${{ steps.vulnerable.outputs.exit-code }}'"; exit 1; }
+          python3 -c "import json; d = json.load(open('vulnerable-report.json')); assert d['summary']['confirmed'] == 2, d['summary']"
+          python3 -c "import json; s = json.load(open('vulnerable.sarif')); assert s['version'] == '2.1.0'; assert len(s['runs'][0]['results']) == 2"
+
+      - name: Scan an undetermined case with the default setting (vulnerable demo still running)
+        id: undetermined
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: undetermined-identities.json
+          json-output: undetermined-report.json
+
+      - name: Assert the default run is not failed by an undetermined result
+        run: |
+          test "${{ steps.undetermined.outputs.exit-code }}" = "0" || { echo "expected exit 0, got '${{ steps.undetermined.outputs.exit-code }}'"; exit 1; }
+          python3 -c "import json; d = json.load(open('undetermined-report.json')); assert d['summary']['confirmed'] == 0 and d['summary']['undetermined'] >= 1, d['summary']"
+
+      - name: Scan the same undetermined case with fail-on-undetermined
+        id: strict
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: undetermined-identities.json
+          fail-on-undetermined: "true"
+          json-output: strict-report.json
+
+      - name: Assert the strict run exits 6
+        run: test "${{ steps.strict.outputs.exit-code }}" = "6" || { echo "expected exit 6, got '${{ steps.strict.outputs.exit-code }}'"; exit 1; }
+
+      - name: Refuse the write opt-in without --allow-destructive
+        id: refused
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: examples/identities.json
+          stateful: "true"
+          collection-url: http://127.0.0.1:8000/orders
+          json-output: refused-report.json
+
+      - name: Assert the refusal happened for the opt-in reason and no write reached the demo
+        run: |
+          test "${{ steps.refused.outputs.exit-code }}" = "2" || { echo "expected exit 2, got '${{ steps.refused.outputs.exit-code }}'"; exit 1; }
+          python3 -c "import json; d = json.load(open('refused-report.json'))" 2>/dev/null && { echo "a report was written for a refused run"; exit 1; } || true
+          if grep -E ' (POST|PATCH|PUT|DELETE) ' vulnerable-demo.log; then echo "a write reached the demo"; exit 1; fi
+
+      - name: Stop the vulnerable demo
+        if: always()
+        run: kill "$(cat vulnerable-demo.pid)" 2>/dev/null || true
+
+      - name: Start the secure demo
+        run: |
+          SECURE=1 nohup python3 examples/vulnerable_api.py > secure-demo.log 2>&1 &
+          echo $! > secure-demo.pid
+          for i in $(seq 1 30); do
+            curl -s -o /dev/null -H "Authorization: Bearer alice-token" http://127.0.0.1:8000/orders/1001 && break
+            sleep 1
+          done
+
+      - name: Scan the secure demo
+        id: secure
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: examples/identities.json
+          sarif-output: secure.sarif
+          json-output: secure-report.json
+
+      - name: Assert the secure demo is clean
+        run: |
+          test "${{ steps.secure.outputs.exit-code }}" = "0" || { echo "expected exit 0, got '${{ steps.secure.outputs.exit-code }}'"; exit 1; }
+          python3 -c "import json; d = json.load(open('secure-report.json')); assert d['summary']['confirmed'] == 0, d['summary']"
+
+      - name: Scan an invalid configuration (identities without owns)
+        id: config
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: no-owns-identities.json
+          json-output: config-report.json
+
+      - name: Assert the invalid configuration exits 2
+        run: test "${{ steps.config.outputs.exit-code }}" = "2" || { echo "expected exit 2, got '${{ steps.config.outputs.exit-code }}'"; exit 1; }
+
+      - name: Scan an unreachable target
+        id: unreachable
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:9/orders/{id}
+          identities: examples/identities.json
+          json-output: unreachable-report.json
+
+      - name: Assert the unreachable target exits 4
+        run: test "${{ steps.unreachable.outputs.exit-code }}" = "4" || { echo "expected exit 4, got '${{ steps.unreachable.outputs.exit-code }}'"; exit 1; }
+
+      - name: Upload the vulnerable scan's SARIF (optional; needs code scanning enabled)
+        if: always()
+        continue-on-error: true
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: vulnerable.sarif
+          category: api-sentinel-selftest
+
+      - name: Stop the secure demo
+        if: always()
+        run: kill "$(cat secure-demo.pid)" 2>/dev/null || true

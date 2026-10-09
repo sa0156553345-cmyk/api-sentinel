@@ -1,0 +1,55 @@
+# Example: running API Sentinel in GitHub Actions against a staging API you are authorized to test.
+#
+# Copy to .github/workflows/api-sentinel.yml in the repository that owns the API test environment.
+# Tokens come from repository secrets and are written to identities.json at run time. identities.json is in .gitignore.
+#
+# Status: the composite action's script was executed locally with the environment GitHub passes, and this file was
+# checked for YAML validity. The workflow has not been run on a GitHub-hosted runner. Validate it in your own
+# repository before relying on it.
+
+name: API Sentinel
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+permissions:
+  contents: read
+  security-events: write   # needed to upload SARIF to the Security tab
+
+jobs:
+  authorization-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Write identities from secrets
+        env:
+          ALICE_TOKEN: ${{ secrets.SENTINEL_ALICE_TOKEN }}
+          BOB_TOKEN: ${{ secrets.SENTINEL_BOB_TOKEN }}
+        run: |
+          python3 - <<'PY'
+          import json, os
+          doc = {"identities": [
+              {"name": "alice", "headers": {"Authorization": "Bearer " + os.environ["ALICE_TOKEN"]},
+               "owns": ["1001"]},
+              {"name": "bob", "headers": {"Authorization": "Bearer " + os.environ["BOB_TOKEN"]},
+               "owns": ["2001"]},
+          ]}
+          with open("identities.json", "w", encoding="utf-8") as f:
+              json.dump(doc, f)
+          PY
+
+      - name: Run API Sentinel (read-only authorization checks)
+        id: sentinel
+        uses: ./
+        with:
+          url: https://staging.example.com/orders/{id}
+          identities: identities.json
+          fail-on: high
+
+      - name: Upload SARIF to the Security tab
+        if: always()
+        uses: github/codeql-action/upload-sarif@v3
+        with:
+          sarif_file: ${{ steps.sentinel.outputs.sarif }}

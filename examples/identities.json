@@ -1,0 +1,14 @@
+{
+  "identities": [
+    {
+      "name": "alice",
+      "headers": { "Authorization": "Bearer alice-token" },
+      "owns": [1001]
+    },
+    {
+      "name": "bob",
+      "headers": { "Authorization": "Bearer bob-token" },
+      "owns": [2001]
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+name: "API Sentinel"
+description: >
+  Authorization (BOLA) regression testing for an API you are authorized to test.
+  Confirmed findings are leads for human validation, not proof of a vulnerability.
+branding:
+  icon: "shield"
+  color: "red"
+
+inputs:
+  url:
+    description: "URL template containing {id}, e.g. https://staging.example.com/orders/{id}"
+    required: true
+  identities:
+    description: "Path to the identities JSON file, relative to the repository root. Keep it out of git."
+    required: true
+  collection-url:
+    description: "Collection URL for the stateful flow, e.g. https://staging.example.com/orders"
+    required: false
+    default: ""
+  stateful:
+    description: "Also run the create-then-cross-access flow. It writes to the target: use disposable environments only."
+    required: false
+    default: "false"
+  allow-destructive:
+    description: "Opt-in required together with stateful: allows create, PATCH and DELETE on the target."
+    required: false
+    default: "false"
+  fail-on:
+    description: "Fail when a confirmed finding is at or above this severity: none | high | critical"
+    required: false
+    default: "high"
+  fail-on-undetermined:
+    description: "Also fail when results are undetermined and need human review (exit code 6)."
+    required: false
+    default: "false"
+  sarif-output:
+    description: "Path for the SARIF report (confirmed findings only), uploaded to the Security tab"
+    required: false
+    default: "api-sentinel.sarif"
+  json-output:
+    description: "Path for the JSON report"
+    required: false
+    default: "api-sentinel-report.json"
+
+outputs:
+  exit-code:
+    description: "Exit code of the scan. See the README for what each code means."
+    value: ${{ steps.scan.outputs.exit-code }}
+  sarif:
+    description: "Path to the SARIF report written by this run"
+    value: ${{ steps.scan.outputs.sarif }}
+
+runs:
+  using: "composite"
+  steps:
+    - id: scan
+      shell: bash
+      # Inputs reach the script only through environment variables, never by pasting them into the script text.
+      env:
+        API_SENTINEL_HOME: ${{ github.action_path }}
+        IN_URL: ${{ inputs.url }}
+        IN_IDENTITIES: ${{ inputs.identities }}
+        IN_COLLECTION_URL: ${{ inputs.collection-url }}
+        IN_STATEFUL: ${{ inputs.stateful }}
+        IN_ALLOW_DESTRUCTIVE: ${{ inputs.allow-destructive }}
+        IN_FAIL_ON: ${{ inputs.fail-on }}
+        IN_FAIL_ON_UNDETERMINED: ${{ inputs.fail-on-undetermined }}
+        IN_SARIF: ${{ inputs.sarif-output }}
+        IN_JSON: ${{ inputs.json-output }}
+      run: |
+        set -u
+        cmd=(python3 "$API_SENTINEL_HOME/api_sentinel.py" --yes-i-am-authorized
+             --url "$IN_URL" --identities "$IN_IDENTITIES"
+             --fail-on "$IN_FAIL_ON" --output "$IN_JSON" --sarif-output "$IN_SARIF")
+        if [ "$IN_STATEFUL" = "true" ]; then
+          cmd+=(--stateful --collection-url "$IN_COLLECTION_URL")
+        fi
+        if [ "$IN_ALLOW_DESTRUCTIVE" = "true" ]; then
+          cmd+=(--allow-destructive)
+        fi
+        set +e
+        "${cmd[@]}"
+        code=$?
+        set -e
+        if [ "$code" -eq 6 ] && [ "$IN_FAIL_ON_UNDETERMINED" != "true" ]; then
+          echo "::warning title=API Sentinel::Results need human review (exit code 6). The job is not failed by default."
+          code=0
+        fi
+        if [ ! -f "$IN_SARIF" ]; then
+          # Keep the upload step working when the scan stopped before writing a report.
+          printf '%s\n' '{"version":"2.1.0","runs":[{"tool":{"driver":{"name":"api-sentinel","rules":[]}},"results":[]}]}' > "$IN_SARIF"
+        fi
+        echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        echo "sarif=$IN_SARIF" >> "$GITHUB_OUTPUT"
+        exit "$code"
