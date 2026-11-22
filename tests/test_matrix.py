@@ -41,7 +41,7 @@ def _by_id(case_id):
 
 
 def test_scenario_count():
-    assert len({c.scenario for c in scenarios.CASES}) == 26
+    assert len({c.scenario for c in scenarios.CASES}) == 27
 
 
 def test_migrated_scenarios_are_present():

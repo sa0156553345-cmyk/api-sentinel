@@ -158,6 +158,10 @@ def seed_orders():
     }
 
 
+# A POST sub-action on an order sets a status that a fresh order does not have.
+ACTION_STATUS = {"cancel": "cancelled", "ship": "shipped"}
+
+
 # --- configurable orders API ---------------------------------------------
 
 class OrdersApp:
@@ -175,14 +179,19 @@ class OrdersApp:
     deny_leak    403, but the body is the full record (the status misleads; the data is disclosed)
     partial_status  non-owners get 200 {"status": ...} only (partial disclosure)
     placeholder  non-owners get 200 with the same keys and types as a real record but no real data
+    validation   non-owners get 422 for any write, before any ownership check (no authorization signal)
 
     view="no_id"  GET answers {item, total} to everybody: no id, no owner field
     view="holder" the owner is stored as "holder": "acct-<id>" instead of user_id (unknown field name)
+
+    POST /orders/{id}/cancel and POST /orders/{id}/ship (ACTION_STATUS) are named "cancel" and "ship" in non_owner. They
+    take the same modes as the verbs, and set the order's status only when the action is performed.
     """
 
     def __init__(self, non_owner=None, orders=None, admin_override=False, shares=None,
                  ownerless_open=False, create_responds="body", view=None):
-        self.modes = {"GET": "deny", "PATCH": "deny", "PUT": "unsupported", "DELETE": "deny"}
+        self.modes = {"GET": "deny", "PATCH": "deny", "PUT": "unsupported", "DELETE": "deny",
+                      **{action: "deny" for action in ACTION_STATUS}}
         self.modes.update(non_owner or {})
         self.orders = copy.deepcopy(orders) if orders is not None else seed_orders()
         self.next_id = 5000
@@ -207,12 +216,16 @@ class OrdersApp:
             return Resp(201, dict(self.orders[oid]))
         if len(parts) == 2 and parts[0] == "orders" and parts[1].isdigit():
             return self._item(req, user, int(parts[1]))
+        if len(parts) == 3 and parts[0] == "orders" and parts[1].isdigit() and parts[2] in ACTION_STATUS:
+            if req.method != "POST":
+                return Resp(405, {"error": "method not allowed"})
+            return self._item(req, user, int(parts[1]), action=parts[2])
         return not_found()
 
-    def _item(self, req, user, oid):
+    def _item(self, req, user, oid, action=None):
         if not user:
             return unauthorized()
-        verb = req.method
+        verb = action or req.method
         mode = self.modes.get(verb, "unsupported")
         if mode == "unsupported":
             return Resp(405, {"error": "method not allowed"})
@@ -237,6 +250,8 @@ class OrdersApp:
         if mode == "async":
             self._perform(verb, req, oid)
             return Resp(202, {"status": "accepted"})
+        if mode == "validation":
+            return Resp(422, {"error": "invalid body"})
         if mode == "blind":
             self._perform(verb, req, oid)
             return forbidden()
@@ -270,6 +285,9 @@ class OrdersApp:
         if verb == "DELETE":
             del self.orders[oid]
             return Resp(204)
+        if verb in ACTION_STATUS:
+            order["status"] = ACTION_STATUS[verb]
+            return Resp(200, dict(order))
         raise ValueError(verb)
 
 
@@ -468,7 +486,8 @@ class ReprApp:
 
 
 class DownloadApp:
-    """/invoices/{id}: leaks to any authenticated caller, in a non-JSON (or mislabelled) representation."""
+    """/invoices/{id}: leaks to any authenticated caller in a non-JSON or mislabelled representation (pdf, json_as_text,
+    html_copy). html_own_only is the secure control: the owner gets the page, everyone else gets a 403 page."""
 
     ROWS = {1001: "alice", 2001: "bob"}
 
@@ -488,4 +507,16 @@ class DownloadApp:
             return not_found()
         if self.kind == "pdf":
             return Resp(200, f"%PDF-1.4\n% invoice {oid} for {name}\n%%EOF\n".encode(), "application/pdf")
+        if self.kind == "html_copy":
+            return Resp(200, self._invoice_html(oid, name), "text/html; charset=utf-8")
+        if self.kind == "html_own_only":
+            if user["name"] != name:
+                return Resp(403, "<p>Forbidden</p>", "text/html; charset=utf-8")
+            return Resp(200, self._invoice_html(oid, name), "text/html; charset=utf-8")
         return Resp(200, {"id": oid, "owner": name, "amount": 120.0}, "text/plain")
+
+    @staticmethod
+    def _invoice_html(oid, name):
+        return (f"<!doctype html><html><head><title>Invoice {oid}</title></head><body>"
+                f"<h1>Invoice {oid}</h1><p>Billed to {name}@example.test.</p>"
+                "<p>Amount due: 120.00 EUR. Status: paid.</p></body></html>")
