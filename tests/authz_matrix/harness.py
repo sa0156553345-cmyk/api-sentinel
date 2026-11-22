@@ -97,6 +97,7 @@ class Case:
     probe_mode: str | None = None   # how to verify the oracle for cli cases
     use_owns: bool = True           # cli: write 'owns' into identities.json?
     notes: str = ""
+    actions: list = field(default_factory=list)  # stateful POST sub-actions: dicts with name, url, body, expect
 
 
 @dataclass
@@ -186,8 +187,11 @@ def _run_engine(case: Case, fx: Fixture) -> ToolRun:
         else:
             coll = case.collection_url.replace("{base}", fx.base)
             # The harness is the operator here. Its targets are loopback fixtures it owns, so the write opt-in is explicit.
+            actions = [s.PostAction(a["name"], a["url"].replace("{base}", fx.base), dict(a.get("body", {})),
+                                    dict(a["expect"])) for a in case.actions]
             found = s.run_stateful_flow(coll, url, ids, {"item": "Matrix", "total": 9.99}, TIMEOUT,
-                                        allow_destructive=True, owner_fields=DEFAULT_OWNER_FIELDS, log=trail)
+                                        allow_destructive=True, owner_fields=DEFAULT_OWNER_FIELDS, log=trail,
+                                        actions=actions)
     except s.ConfigError as exc:  # includes DestructiveOperationRefused
         return ToolRun(refused=str(exc), requests=len(trail))
     except s.TransportError as exc:
@@ -241,13 +245,19 @@ def _run_cli(case: Case, fx: Fixture) -> ToolRun:
                    setup_failed=any(f["check"] == "stateful-flow-setup" for f in findings), cli=cli)
 
 
+def _verb_of(f: dict) -> str:
+    """The access verb a finding answers to: the name of a POST action, or else its HTTP method. Every action is a POST,
+    so the name is what tells two actions apart."""
+    return (f.get("details") or {}).get("action") or f["method"]
+
+
 def _matching(run: ToolRun, a: Access):
     out = []
     for f in run.findings:
         if f["check"] not in AUTHZ_CHECKS:
             continue
         d = f.get("details") or {}
-        if (d.get("owner_identity"), d.get("accessing_identity"), f["method"]) == (a.owner, a.accessor, a.verb):
+        if (d.get("owner_identity"), d.get("accessing_identity"), _verb_of(f)) == (a.owner, a.accessor, a.verb):
             out.append(f)
     return out
 
@@ -258,7 +268,7 @@ def _keyed(run: ToolRun, a: Access, check: str):
         if f["check"] != check:
             continue
         d = f.get("details") or {}
-        if (d.get("owner_identity"), d.get("accessing_identity"), f["method"]) == (a.owner, a.accessor, a.verb):
+        if (d.get("owner_identity"), d.get("accessing_identity"), _verb_of(f)) == (a.owner, a.accessor, a.verb):
             out.append(f)
     return out
 
@@ -322,6 +332,12 @@ def _applied(app, verb: str, rid: int) -> bool:
     raise ValueError(verb)
 
 
+def _action_applied(app, rid: int, expect: dict) -> bool:
+    """The fixture's own record shows the action's expected values. A fresh fixture shows none of them before the call."""
+    order = app.orders.get(rid, {})
+    return all(order.get(k) == v for k, v in expect.items())
+
+
 def _fill(template: str, ident: IdSpec, rid, base: str) -> str:
     url = template.replace("{base}", base)
     if rid is not None:
@@ -349,7 +365,12 @@ def verify_access(case: Case, a: Access):
             rid = owner.owns[0]
         owner_url = _fill(a.owner_url or case.url, owner, rid, fx.base)
         acc_url = _fill(a.accessor_url, acc, rid, fx.base) if a.accessor_url else owner_url
-        if a.verb == "GET":
+        action = next((x for x in case.actions if x["name"] == a.verb), None)
+        if action is not None:
+            sa, _ba, _ = _http("POST", _fill(action["url"], acc, rid, fx.base), acc.token, action["body"])
+            effect = _action_applied(fx.app, int(rid), action["expect"])
+            note = f"accessor POST {a.verb} -> HTTP {sa}; effect {'applied' if effect else 'not applied'}"
+        elif a.verb == "GET":
             so, bo, _ = _http("GET", owner_url, owner.token)
             sa, ba, _ = _http("GET", acc_url, acc.token)
             if so != 200:
@@ -378,7 +399,7 @@ def run_case(case: Case) -> CaseResult:
     unlabeled = []
     for f in run.findings:
         d = f.get("details") or {}
-        key = (d.get("owner_identity"), d.get("accessing_identity"), f["method"])
+        key = (d.get("owner_identity"), d.get("accessing_identity"), _verb_of(f))
         if f["check"] in AUTHZ_CHECKS and key not in keys:
             unlabeled.append(f)
     residue = sum(1 for f in run.findings if f.get("status") == "residue")

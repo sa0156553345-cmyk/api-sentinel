@@ -1,4 +1,4 @@
-"""Authorization scenarios: 26 scenarios, 59 cases.
+"""Authorization scenarios: 27 scenarios, 67 cases.
 
 Oracle labels and gap annotations are PREDICTIONS written before the first run for this version. Labels describe the
 truth about each fixture and are checked independently (harness.verify_access). A gap annotation predicts a deviation;
@@ -15,8 +15,8 @@ from .harness import INDET, POLICY, SECURE, VULNERABLE, Access, Case, IdSpec
 GAPS = {
     "G01": "RESOLVED. Stateful writes are judged by the owner's own re-read, not by the status code. A 2xx without an effect is not a finding (stateful-no-effect).",
     "G02": "PARTIALLY RESOLVED. A write whose effect is applied is detected even when it answers 403 or 202 at once. A 202 whose effect is not visible at the re-read is UNDETERMINED. The later-effect path has unit tests only, no matrix fixture.",
-    "G03": "OPEN. The stateful flow exercises GET, PATCH and DELETE only; PUT (and POST sub-actions such as /cancel) are never tried.",
-    "G04": "OPEN. Matrix mode recognises a leak from a short fixed list of id keys, or from a body identical to the owner's. A non-JSON response cannot be evaluated: the check is incomplete (NEEDS_INPUT), never a pass. A partial view is UNDETERMINED.",
+    "G03": "PARTIALLY RESOLVED (0.10.0). A POST sub-action declared with --actions (for example /cancel) is sent once per non-owner and judged by the owner's record, like a write (S27). Actions are not discovered: an undeclared POST is never tried. A POST that only returns data and changes nothing in the record cannot be judged, so such a leak is not seen; it is reported as no effect.",
+    "G04": "OPEN. Matrix mode recognises a leak from a short fixed list of id keys, or from a body identical to the owner's. A text response (HTML, XML, plain text) is compared as text: an identical or near-identical copy is a leak, and a similar page is UNDETERMINED. A binary body (PDF, image) cannot be evaluated: as the owner's response the check is incomplete (NEEDS_INPUT), and as another identity's successful response it is UNDETERMINED, never a pass. A partial view is UNDETERMINED.",
     "G05": "RESOLVED. A schema match, or an id inside a stub, is no longer evidence. A finding needs the requested id in the body and corroboration with the owner's own record.",
     "G06": "RESOLVED, with one consequence. Ownership fields are compared with the owner's record, not merely checked for presence. An empty ownership field in the owner's record means ownership cannot be established: UNDETERMINED.",
     "G07": "RESOLVED. A URL template can carry identity parameters such as {user_id}; the accessor's own parent is substituted, so a caller-specific parent path is tested. A parameter with no value for an identity is a configuration error (exit 2).",
@@ -119,7 +119,7 @@ CASES += [
          lambda: OrdersApp({"GET": "deny", "PATCH": "unsupported", "PUT": "allow", "DELETE": "deny"}),
          bare(ALICE, BOB), ORDER_URL,
          [Access("alice", "bob", "GET", SECURE), Access("alice", "bob", "PATCH", SECURE),
-          Access("alice", "bob", "PUT", VULNERABLE, gap="G03"), Access("alice", "bob", "DELETE", SECURE)],
+          Access("alice", "bob", "PUT", VULNERABLE), Access("alice", "bob", "DELETE", SECURE)],
          collection_url=COLL_URL),
     Case("S04-put-secure", "S04", "Update only via PUT (PATCH unsupported)", "secure", "stateful",
          lambda: OrdersApp({"GET": "deny", "PATCH": "unsupported", "PUT": "deny", "DELETE": "deny"}),
@@ -176,12 +176,17 @@ for _kind, _gap in [("created_by", ""), ("ownerId", ""), ("nested_owner", ""), (
         (lambda k=_kind: ReprApp(k)), [ALICE, BOB], ORDER_URL,
         [Access(o, a, "GET", VULNERABLE, gap=_gap, leak_marker=_markers.get(o)) for o, a in AB]))
 
-# S10 non-JSON representations (always leak)
+# S10 non-JSON and HTML representations: a leak when the same record reaches another identity, plus a secure control
 CASES += [
     Case("S10-pdf", "S10", "Invoice download as application/pdf", "vulnerable", "matrix",
          lambda: DownloadApp("pdf"), [ALICE, BOB], "{base}/invoices/{id}", reads(AB, VULNERABLE, gap="G04")),
     Case("S10-json-as-text", "S10", "JSON served as text/plain", "vulnerable", "matrix",
-         lambda: DownloadApp("json_as_text"), [ALICE, BOB], "{base}/invoices/{id}", reads(AB, VULNERABLE, gap="G04")),
+         lambda: DownloadApp("json_as_text"), [ALICE, BOB], "{base}/invoices/{id}", reads(AB, VULNERABLE)),
+    Case("S10-html-copy", "S10", "Invoice page as text/html, the same for every caller", "vulnerable", "matrix",
+         lambda: DownloadApp("html_copy"), [ALICE, BOB], "{base}/invoices/{id}", reads(AB, VULNERABLE)),
+    Case("S10-html-own-only", "S10", "Invoice page as text/html for its owner, 403 page for everyone else",
+         "secure", "matrix", lambda: DownloadApp("html_own_only"), [ALICE, BOB], "{base}/invoices/{id}",
+         reads(AB, SECURE)),
 ]
 
 # S11 nested resources
@@ -337,6 +342,33 @@ CASES += [
          "matrix", lambda: OrdersApp({"GET": "placeholder"}), [ALICE, BOB], ORDER_URL, reads(AB, SECURE)),
 ]
 
+# S27 POST sub-actions (stateful, --actions): a non-owner posts an action such as /cancel to the owner's order. The
+# action's effect is judged by the owner's record, like a write (GAPS G03).
+CANCEL = {"name": "cancel", "url": "{base}/orders/{id}/cancel", "body": {}, "expect": {"status": "cancelled"}}
+SHIP = {"name": "ship", "url": "{base}/orders/{id}/ship", "body": {}, "expect": {"status": "shipped"}}
+VERBS_SECURE = [Access("alice", "bob", v, SECURE) for v in ("GET", "PATCH", "DELETE")]
+CASES += [
+    Case("S27-cancel-vuln", "S27", "POST /orders/{id}/cancel: a non-owner cancels the owner's order", "vulnerable",
+         "stateful", lambda: OrdersApp({"cancel": "allow"}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", VULNERABLE)], collection_url=COLL_URL, actions=[CANCEL]),
+    Case("S27-cancel-secure", "S27", "POST /orders/{id}/cancel: non-owners are refused", "secure", "stateful",
+         lambda: OrdersApp({}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", SECURE)], collection_url=COLL_URL, actions=[CANCEL]),
+    Case("S27-cancel-blind", "S27", "POST /orders/{id}/cancel is applied but answers 403", "vulnerable", "stateful",
+         lambda: OrdersApp({"cancel": "blind"}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", VULNERABLE)], collection_url=COLL_URL, actions=[CANCEL]),
+    Case("S27-cancel-async", "S27", "POST /orders/{id}/cancel is applied and answers 202 Accepted", "vulnerable",
+         "stateful", lambda: OrdersApp({"cancel": "async"}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", VULNERABLE)], collection_url=COLL_URL, actions=[CANCEL]),
+    Case("S27-cancel-noop", "S27", "POST /orders/{id}/cancel answers 200 and changes nothing", "secure", "stateful",
+         lambda: OrdersApp({"cancel": "noop"}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", SECURE)], collection_url=COLL_URL, actions=[CANCEL]),
+    Case("S27-two-actions", "S27", "Two POST actions: cancel is open to non-owners, ship is refused", "partial",
+         "stateful", lambda: OrdersApp({"cancel": "allow"}), bare(ALICE, BOB), ORDER_URL,
+         VERBS_SECURE + [Access("alice", "bob", "cancel", VULNERABLE), Access("alice", "bob", "ship", SECURE)],
+         collection_url=COLL_URL, actions=[CANCEL, SHIP]),
+]
+
 # (pair name, vulnerable case id, secure case id)
 PAIRS = [
     ("S01 owner/non-owner", "S01-vuln", "S01-secure"),
@@ -354,4 +386,5 @@ PAIRS = [
     ("S15 sharing", "S15-share-vuln", "S15-share-secure"),
     ("S21 403 with record", "S21-deny-body-vuln", "S21-deny-body-secure"),
     ("S25 holder field", "S25-holder-vuln", "S25-holder-secure"),
+    ("S27 POST action", "S27-cancel-vuln", "S27-cancel-secure"),
 ]

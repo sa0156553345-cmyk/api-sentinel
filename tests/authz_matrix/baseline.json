@@ -336,11 +336,11 @@
   "score": 0.0
  },
  "S04-put-vuln|alice>bob|PUT": {
-  "state": "NO_FINDING",
-  "outcome": "FN",
-  "confidence": "",
-  "severity": "",
-  "score": 0.0
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
  },
  "S05-async-secure|alice>bob|DELETE": {
   "state": "NO_FINDING",
@@ -573,19 +573,47 @@
   "severity": "info",
   "score": 0.0
  },
- "S10-json-as-text|alice>bob|GET": {
-  "state": "SKIPPED",
-  "outcome": "NEEDS_INPUT",
+ "S10-html-copy|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S10-html-copy|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S10-html-own-only|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
   "confidence": "",
   "severity": "",
   "score": 0.0
  },
- "S10-json-as-text|bob>alice|GET": {
-  "state": "SKIPPED",
-  "outcome": "NEEDS_INPUT",
+ "S10-html-own-only|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
   "confidence": "",
   "severity": "",
   "score": 0.0
+ },
+ "S10-json-as-text|alice>bob|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
+ },
+ "S10-json-as-text|bob>alice|GET": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "medium",
+  "severity": "high",
+  "score": 70.0
  },
  "S10-pdf|alice>bob|GET": {
   "state": "SKIPPED",
@@ -1092,6 +1120,181 @@
   "score": 0.0
  },
  "S26-placeholder-same-schema|bob>alice|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-async|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-async|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-async|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-async|alice>bob|cancel": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S27-cancel-blind|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-blind|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-blind|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-blind|alice>bob|cancel": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S27-cancel-noop|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-noop|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-noop|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-noop|alice>bob|cancel": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-secure|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-secure|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-secure|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-secure|alice>bob|cancel": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-vuln|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-vuln|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-vuln|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-cancel-vuln|alice>bob|cancel": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S27-two-actions|alice>bob|DELETE": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-two-actions|alice>bob|GET": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-two-actions|alice>bob|PATCH": {
+  "state": "NO_FINDING",
+  "outcome": "TN",
+  "confidence": "",
+  "severity": "",
+  "score": 0.0
+ },
+ "S27-two-actions|alice>bob|cancel": {
+  "state": "FINDING",
+  "outcome": "TP",
+  "confidence": "high",
+  "severity": "critical",
+  "score": 90.0
+ },
+ "S27-two-actions|alice>bob|ship": {
   "state": "NO_FINDING",
   "outcome": "TN",
   "confidence": "",

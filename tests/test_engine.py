@@ -17,7 +17,7 @@ sys.path.insert(0, str(ROOT))
 sys.path.insert(0, str(HERE))
 
 import api_sentinel as s  # noqa: E402
-from authz_matrix.fixtures import (CollectionApp, Fixture, NestedApp, OrdersApp, ReprApp, Resp,  # noqa: E402
+from authz_matrix.fixtures import (CollectionApp, Fixture, NestedApp, OrdersApp, Resp,  # noqa: E402
                                    make_order, seed_orders)
 
 ORDERS = "/orders/{id}"
@@ -221,6 +221,20 @@ def test_a_write_applied_despite_a_403_is_critical():
         found = _stateful(fx, [alice(()), bob(())])
     hits = [f for f in found if f.check == "stateful-authorization-boundary"]
     assert len(hits) == 1 and hits[0].method == "PATCH" and hits[0].severity == "critical"
+
+
+def test_a_non_owner_put_that_is_applied_is_critical():
+    with Fixture(OrdersApp({"GET": "deny", "PATCH": "unsupported", "PUT": "allow", "DELETE": "deny"})) as fx:
+        found = _stateful(fx, [alice(()), bob(())])
+    hits = [f for f in found if f.check == "stateful-authorization-boundary"]
+    assert len(hits) == 1 and hits[0].method == "PUT" and hits[0].severity == "critical"
+
+
+def test_a_put_the_target_rejects_as_malformed_is_undetermined_not_silent():
+    with Fixture(OrdersApp({"GET": "deny", "PATCH": "unsupported", "PUT": "validation", "DELETE": "deny"})) as fx:
+        found = _stateful(fx, [alice(()), bob(())])
+    assert not [f for f in found if f.check == "stateful-authorization-boundary"]
+    assert any(f.method == "PUT" for f in undetermined(found))
 
 
 class _AcceptsButIgnores:

@@ -111,6 +111,30 @@ jobs:
           python3 -c "import json; d = json.load(open('refused-report.json'))" 2>/dev/null && { echo "a report was written for a refused run"; exit 1; } || true
           if grep -E ' (POST|PATCH|PUT|DELETE) ' vulnerable-demo.log; then echo "a write reached the demo"; exit 1; fi
 
+      - name: Write the actions file used by the negative case
+        run: |
+          cat > actions-without-stateful.json << 'JSON'
+          {"actions": [
+            {"name": "cancel", "url": "http://127.0.0.1:8000/orders/{id}/cancel", "expect": {"status": "cancelled"}}
+          ]}
+          JSON
+
+      - name: Refuse an actions file without stateful
+        id: actions-refused
+        uses: ./
+        continue-on-error: true
+        with:
+          url: http://127.0.0.1:8000/orders/{id}
+          identities: examples/identities.json
+          actions: actions-without-stateful.json
+          json-output: actions-refused-report.json
+
+      - name: Assert --actions without --stateful exits 2 before any request
+        run: |
+          test "${{ steps.actions-refused.outputs.exit-code }}" = "2" || { echo "expected exit 2, got '${{ steps.actions-refused.outputs.exit-code }}'"; exit 1; }
+          python3 -c "import json; d = json.load(open('actions-refused-report.json'))" 2>/dev/null && { echo "a report was written for a refused run"; exit 1; } || true
+          if grep -E ' (POST|PATCH|PUT|DELETE) ' vulnerable-demo.log; then echo "a write reached the demo"; exit 1; fi
+
       - name: Stop the vulnerable demo
         if: always()
         run: kill "$(cat vulnerable-demo.pid)" 2>/dev/null || true

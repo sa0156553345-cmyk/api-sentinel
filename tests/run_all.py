@@ -23,6 +23,7 @@ def main() -> int:
     for path in sorted(HERE.glob("test_*.py")):
         spec = importlib.util.spec_from_file_location(path.stem, path)
         module = importlib.util.module_from_spec(spec)
+        sys.modules[path.stem] = module  # dataclasses in a test module look their module up here
         spec.loader.exec_module(module)
         for name in sorted(dir(module)):
             fn = getattr(module, name)
